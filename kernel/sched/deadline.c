@@ -1135,32 +1135,6 @@ next_node:
 	return NULL;
 }
 
-/*
- * Return the earliest pushable rq's task, which is suitable to be executed
- * on the CPU, NULL otherwise:
- */
-static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu)
-{
-	struct rb_node *next_node = rq->dl.pushable_dl_tasks_leftmost;
-	struct task_struct *p = NULL;
-
-	if (!has_pushable_dl_tasks(rq))
-		return NULL;
-
-next_node:
-	if (next_node) {
-		p = rb_entry(next_node, struct task_struct, pushable_dl_tasks);
-
-		if (pick_dl_task(rq, p, cpu))
-			return p;
-
-		next_node = rb_next(next_node);
-		goto next_node;
-	}
-
-	return NULL;
-}
-
 static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
 
 static int find_later_rq(struct task_struct *task)
